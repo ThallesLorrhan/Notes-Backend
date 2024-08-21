@@ -46,11 +46,23 @@ def getRoutes(request):
 @api_view(['GET'])
 def getNotes(requets):
     notes = Note.objects.all()
-    serializers = NoteSerializers(notes,many=True)
-    return Response(serializers.data)
+    serializer = NoteSerializers(notes,many=True)
+    return Response(serializer.data)
 
 @api_view(['GET'])
 def getNote(requets,pk):
     notes = Note.objects.get(id=pk)
-    serializers = NoteSerializers(notes,many=False)
-    return Response(serializers.data)
+    serializer = NoteSerializers(notes,many=False)
+    return Response(serializer.data)
+
+
+@api_view(['PUT'])
+def updateNote(request, pk):
+    data = request.data
+    note = Note.objects.get(id=pk)
+    serializer = NoteSerializers(instance=note, data=data)
+
+    if serializer.is_valid():
+        serializer.save()
+    
+    return Response(serializer.data)
